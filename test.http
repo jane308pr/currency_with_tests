@@ -1,0 +1,26 @@
+POST http://localhost:8888/currency
+Content-Type: application/json
+
+{
+  "name": "Canadian dollar",
+  "code": "CAD",
+  "symbol": "$"
+}
+###
+GET https://openexchangerates.org/api/latest.json?app_id=117d55feb99d40ef9bc3569fbceea89c&symbols=cad
+###
+GET http://localhost:8888/currency/2
+###
+GET http://localhost:8888/currency/
+###
+GET https://openexchangerates.org/api/ohlc.json
+{
+    ?app_id="1ce73ad6a57744ba8514dd76d877b297"
+    &start_time="2017-07-17T11:00:00Z"
+    &period=30m
+    &base=USD
+    &symbols=GBP,EUR,HKD
+    &prettyprint=true
+}
+
+
