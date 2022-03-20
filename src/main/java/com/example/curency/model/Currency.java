@@ -1,7 +1,7 @@
 package com.example.curency.model;
 
 
-/*import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+/*
 import lombok.Getter;
 import lombok.Setter;
 */
@@ -25,11 +25,9 @@ public class Currency {
         @Column(name = "symbol")
         private String symbol;
 
-
-
         public Integer getId() {
-                return id;
-            }
+                        return id;
+                    }
 
         public void setId(Integer id) {
             this.id = id;
