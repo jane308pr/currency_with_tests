@@ -9,8 +9,6 @@ import java.util.List;
 @Service
 public class CurrencyServiceImpl implements CurrencyService {
 
-
-
     private final CurrencyRepository currencyRepository;
 
     public CurrencyServiceImpl(CurrencyRepository currencyRepository) {
@@ -26,7 +24,6 @@ public class CurrencyServiceImpl implements CurrencyService {
     public List<Currency>  readAll() {
         return currencyRepository.findAll();
     }
-
 
     @Override
     public Currency read(int id) {

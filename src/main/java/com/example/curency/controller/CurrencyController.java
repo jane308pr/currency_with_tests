@@ -4,9 +4,9 @@ import com.example.curency.model.Currency;
 
 import com.example.curency.model.CurrencyWithRate;
 import com.example.curency.service.CurrencyService;
-import com.example.curency.service.LastestResponse;
+import com.example.curency.service.ExternalCurrencyRate;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,17 +14,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
 public class CurrencyController {
 
     private final CurrencyService currencyService;
-    private final LastestResponse lastestResponse;
-
-    @Autowired
-    public CurrencyController(CurrencyService currencyService, LastestResponse lastestResponse) {
-        this.currencyService = currencyService;
-        this.lastestResponse = lastestResponse;
-    }
-
+    private final ExternalCurrencyRate externalRates;
 
     @PostMapping(value = "/currency")
     public ResponseEntity<?> create(@RequestBody Currency currency) {
@@ -34,7 +28,7 @@ public class CurrencyController {
 
     @GetMapping(value = "/currency")
     public ResponseEntity<List<Currency>> read() {
-        final List<Currency> currencyList = currencyService.readAll();
+        List<Currency> currencyList = currencyService.readAll();
 
         return currencyList != null &&  !currencyList.isEmpty()
                 ? new ResponseEntity<>(currencyList, HttpStatus.OK)
@@ -43,10 +37,9 @@ public class CurrencyController {
 
     @GetMapping(value = "/currency/{id}")
     public ResponseEntity<CurrencyWithRate> read(@PathVariable(name = "id") int id) {
-        final Currency currencyEntity = currencyService.read(id);
-        final Float rate = lastestResponse.getRate(currencyEntity.getCode());
-        final CurrencyWithRate data= new CurrencyWithRate(currencyEntity, rate);
-
+        Currency currencyEntity = currencyService.read(id);
+        Float rate = externalRates.getRate(currencyEntity.getCode());
+        CurrencyWithRate data= new CurrencyWithRate(currencyEntity, rate);
 
         return currencyEntity != null
                 ? new ResponseEntity<>(data, HttpStatus.OK)
@@ -55,7 +48,7 @@ public class CurrencyController {
 
     @PutMapping(value = "/currency/{id}")
     public ResponseEntity<?> update(@PathVariable(name = "id") int id, @RequestBody Currency currency) {
-        final boolean updated = currencyService.update(currency, id);
+        boolean updated = currencyService.update(currency, id);
 
         return updated
                 ? new ResponseEntity<>(HttpStatus.OK)
@@ -64,7 +57,7 @@ public class CurrencyController {
 
     @DeleteMapping(value = "/clients/{id}")
     public ResponseEntity<?> delete(@PathVariable(name = "id") int id) {
-        final boolean deleted = currencyService.delete(id);
+        boolean deleted = currencyService.delete(id);
 
         return deleted
                 ? new ResponseEntity<>(HttpStatus.OK)
