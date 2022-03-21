@@ -2,6 +2,7 @@ package com.example.curency.controller;
 
 import com.example.curency.model.Currency;
 
+import com.example.curency.model.CurrencyWithRate;
 import com.example.curency.service.CurrencyService;
 import com.example.curency.service.LastestResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,20 +24,14 @@ public class CurrencyController {
         this.currencyService = currencyService;
         this.lastestResponse = lastestResponse;
     }
-    /*створення нового клієта
-@PostMapping(value = "/clients") — здесь мы обозначаем, что данный метод обрабатывает POST запросы на адрес /clients
-Метод возвращает ResponseEntity<?>. ResponseEntity — специальный класс для возврата ответов.
-Метод принимает параметр @RequestBody Client client, значение этого параметра подставляется из тела запроса.   @RequestBody.
-Внутри тела метода мы вызываем метод create у ранее созданного сервиса и передаем ему принятого в параметрах контроллера клиента.
-     */
+
 
     @PostMapping(value = "/currency")
     public ResponseEntity<?> create(@RequestBody Currency currency) {
         currencyService.create(currency);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
-    /*Далее реализуем операцию Read:для начала реализуем операцию получения списка всех имеющихся клиентов:
-     */
+
     @GetMapping(value = "/currency")
     public ResponseEntity<List<Currency>> read() {
         final List<Currency> currencyList = currencyService.readAll();
@@ -45,16 +40,16 @@ public class CurrencyController {
                 ? new ResponseEntity<>(currencyList, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-    /*Далее реализуем возможность получать клиента по  id:
-     */
+
     @GetMapping(value = "/currency/{id}")
-    public ResponseEntity<Currency> read(@PathVariable(name = "id") int id) {
-        final Currency currency = currencyService.read(id);
-        final String rates = lastestResponse.rates;
+    public ResponseEntity<CurrencyWithRate> read(@PathVariable(name = "id") int id) {
+        final Currency currencyEntity = currencyService.read(id);
+        final Float rate = lastestResponse.getRate(currencyEntity.getCode());
+        final CurrencyWithRate data= new CurrencyWithRate(currencyEntity, rate);
 
 
-        return currency != null
-                ? new ResponseEntity< >(currency, rates, HttpStatus.OK)
+        return currencyEntity != null
+                ? new ResponseEntity<>(data, HttpStatus.OK)
                 : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 

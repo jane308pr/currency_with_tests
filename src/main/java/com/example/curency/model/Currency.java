@@ -25,6 +25,7 @@ public class Currency {
         @Column(name = "symbol")
         private String symbol;
 
+
         public Integer getId() {
                         return id;
                     }
